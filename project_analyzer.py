@@ -7,19 +7,35 @@ class ProjectAnalyzer:
     def __init__(self):
         pass
     
-    def analyze_directory(self, directory_path):
+    def analyze_directory(self, directory_path, max_files=1000):
         """Analyze directory structure and return statistics"""
         stats = {
             'folders': 0,
             'files': 0,
             'lines': 0,
             'characters': 0,
-            'file_tree': {}
+            'file_tree': {},
+            'truncated': False
         }
         
+        processed_files = 0
+        skip_extensions = {'.pyc', '.pyo', '.class', '.o', '.so', '.dll', '.exe', '.bin'}
+        skip_folders = {'__pycache__', '.git', '.svn', 'node_modules', '.dart_tool', 'build'}
+        
         for root, dirs, files in os.walk(directory_path):
+            # Фильтрация папок
+            dirs[:] = [d for d in dirs if d not in skip_folders]
+            
             stats['folders'] += len(dirs)
-            stats['files'] += len(files)
+            
+            # Ограничение количества обрабатываемых файлов
+            if processed_files >= max_files:
+                stats['truncated'] = True
+                break
+            
+            # Фильтрация файлов
+            filtered_files = [f for f in files if not any(f.endswith(ext) for ext in skip_extensions)]
+            stats['files'] += len(filtered_files)
             
             # Build file tree
             rel_root = os.path.relpath(root, directory_path)
@@ -28,13 +44,24 @@ class ProjectAnalyzer:
             
             current_tree = stats['file_tree']
             if rel_root:
+                current_path = directory_path
                 for part in rel_root.split(os.sep):
+                    current_path = os.path.join(current_path, part)
                     if part not in current_tree:
-                        current_tree[part] = {'type': 'folder', 'children': {}, 'stats': {'folders': 0, 'files': 0, 'lines': 0, 'characters': 0}}
+                        current_tree[part] = {
+                            'type': 'folder', 
+                            'children': {}, 
+                            'path': current_path,  # Добавляем путь к папке
+                            'stats': {'folders': 0, 'files': 0, 'lines': 0, 'characters': 0}
+                        }
                     current_tree = current_tree[part]['children']
             
             # Add files to current tree level
-            for file in files:
+            for file in filtered_files:
+                if processed_files >= max_files:
+                    stats['truncated'] = True
+                    break
+                    
                 file_path = os.path.join(root, file)
                 file_stats = self.analyze_file(file_path)
                 
@@ -46,6 +73,7 @@ class ProjectAnalyzer:
                 
                 stats['lines'] += file_stats['lines']
                 stats['characters'] += file_stats['characters']
+                processed_files += 1
         
         return stats
     
