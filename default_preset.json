@@ -1,0 +1,75 @@
+{
+  "name": "Default Flutter Project",
+  "description": "Стандартный минимальный пресет Flutter проекта с базовой структурой",
+  "version": "1.0.0",
+  "created_date": "2025-08-02T20:09:43Z",
+  "file_structure": {
+    "directories": [
+      "lib",
+      "test",
+      "android",
+      "ios",
+      "web",
+      "assets/images",
+      "assets/fonts"
+    ],
+    "files": {
+      "pubspec.yaml": {
+        "template": "pubspec_template",
+        "description": "Конфигурационный файл Flutter проекта"
+      },
+      "lib/main.dart": {
+        "template": "main_dart_template",
+        "description": "Основной файл приложения"
+      },
+      "README.md": {
+        "template": "readme_template",
+        "description": "Описание проекта"
+      },
+      ".gitignore": {
+        "template": "gitignore_template",
+        "description": "Файл игнорирования Git"
+      },
+      "analysis_options.yaml": {
+        "template": "analysis_options_template",
+        "description": "Настройки анализатора кода"
+      }
+    }
+  },
+  "commands": [
+    {
+      "name": "flutter_pub_get",
+      "description": "Получение зависимостей Flutter",
+      "command": "flutter pub get"
+    },
+    {
+      "name": "flutter_run",
+      "description": "Запуск Flutter приложения",
+      "command": "flutter run"
+    },
+    {
+      "name": "flutter_build_apk",
+      "description": "Сборка APK для Android",
+      "command": "flutter build apk"
+    },
+    {
+      "name": "flutter_test",
+      "description": "Запуск тестов",
+      "command": "flutter test"
+    },
+    {
+      "name": "flutter_clean",
+      "description": "Очистка проекта",
+      "command": "flutter clean"
+    }
+  ],
+  "templates": {
+    "analysis_options_template": "include: package:flutter_lints/flutter.yaml\n\nlinter:\n  rules:\n    prefer_const_constructors: true\n    prefer_const_literals_to_create_immutables: true\n    avoid_print: false\n"
+  },
+  "settings": {
+    "auto_format_on_save": true,
+    "enable_hot_reload": true,
+    "target_platform": "android",
+    "use_material_design": true
+  }
+}
